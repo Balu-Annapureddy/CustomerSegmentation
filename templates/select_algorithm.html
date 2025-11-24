@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Select Algorithm{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">Step 2: Select Clustering Algorithm</h3>
+<form method="POST" action="{{ url_for('select_algorithm') }}" class="p-3 border rounded">
+    <div class="mb-3">
+        <label for="algorithm" class="form-label fw-bold">Clustering Method:</label>
+        <select class="form-select" id="algorithm" name="algorithm" required onchange="toggleParams()">
+            <option value="KMeans" selected>K-Means</option>
+            <option value="Hierarchical">Hierarchical Clustering (Agglomerative)</option>
+            <option value="DBSCAN">DBSCAN (Density-Based)</option>
+        </select>
+    </div>
+
+    <!-- K-Means / Hierarchical Params -->
+    <div class="mb-3" id="kmeans-params">
+        <label for="n_clusters" class="form-label fw-bold">Number of Clusters (K-Means/Hierarchical):</label>
+        <input type="number" class="form-control" id="n_clusters" name="n_clusters" value="5" min="2" max="10">
+    </div>
+
+    <!-- DBSCAN Params -->
+    <div class="mb-3 d-none" id="dbscan-params">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="eps" class="form-label fw-bold">Epsilon (eps):</label>
+                <input type="number" step="0.1" class="form-control" id="eps" name="eps" value="0.5" min="0.1" max="5.0">
+                <div class="form-text">Maximum distance between two samples.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="min_samples" class="form-label fw-bold">Min Samples:</label>
+                <input type="number" class="form-control" id="min_samples" name="min_samples" value="5" min="2" max="20">
+                <div class="form-text">Minimum samples in a neighborhood.</div>
+            </div>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success">
+        Run Clustering
+    </button>
+</form>
+
+<script>
+    function toggleParams() {
+        const algo = document.getElementById('algorithm').value;
+        const kmeansParams = document.getElementById('kmeans-params');
+        const dbscanParams = document.getElementById('dbscan-params');
+
+        if (algo === 'DBSCAN') {
+            kmeansParams.classList.add('d-none');
+            dbscanParams.classList.remove('d-none');
+        } else {
+            kmeansParams.classList.remove('d-none');
+            dbscanParams.classList.add('d-none');
+        }
+    }
+</script>
+{% endblock %}

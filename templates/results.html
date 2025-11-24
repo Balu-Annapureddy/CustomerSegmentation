@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Clustering Results{% endblock %}
+
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<h3 class="mb-4">Step 3: Clustering Results ({{ algorithm }})</h3>
+
+<div class="row mb-4">
+    <div class="col-md-12 text-end">
+        <a href="{{ url_for('download_results') }}" class="btn btn-primary">
+            <i class="bi bi-download"></i> Download Results (CSV)
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <h4>📊 Cluster Metrics</h4>
+        <table class="table table-bordered table-sm">
+            <tbody>
+                <tr>
+                    <td class="fw-bold">Algorithm Used</td>
+                    <td>{{ algorithm }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Silhouette Score</td>
+                    <td>
+                        {% if metrics['silhouette_score'] is not none %}
+                            {{ "%.4f"|format(metrics['silhouette_score']) }}
+                        {% else %}
+                            N/A (e.g., only one cluster or DBSCAN noise)
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h5 class="mt-4">Cluster Sizes:</h5>
+        <ul class="list-group">
+            {% for cluster, count in cluster_counts.items() %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Cluster {{ cluster }}
+                    <span class="badge bg-primary rounded-pill">{{ count }} customers</span>
+                </li>
+            {% endfor %}
+            {% if metrics['cluster_counts'].get(-1) %}
+                <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">
+                    Noise / Unclustered Points (DBSCAN)
+                    <span class="badge bg-secondary rounded-pill">{{ metrics['cluster_counts'].get(-1) }} customers</span>
+                </li>
+            {% endif %}
+        </ul>
+        
+    </div>
+    <div class="col-md-7">
+        <h4>📈 Cluster Plot (Recency vs. Monetary)</h4>
+        <!-- Display Base64 Image -->
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Cluster Plot" class="img-fluid border rounded shadow-sm">
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h4>🧊 3D Visualization (Interactive)</h4>
+        <div id="plotly-div" class="border rounded shadow-sm" style="height: 600px;"></div>
+    </div>
+</div>
+
+<h4 class="mt-5">📋 Segment Summary (Average RFM Values)</h4>
+<div class="table-responsive">
+    {{ segment_summary | safe }}
+</div>
+
+<div class="mt-4 mb-5">
+    <a href="{{ url_for('select_algorithm') }}" class="btn btn-outline-secondary">
+        &larr; Run Another Algorithm
+    </a>
+    <a href="{{ url_for('upload_file') }}" class="btn btn-outline-danger float-end">
+        Start Over / Upload New File
+    </a>
+</div>
+
+<script>
+    var graphs = {{ plotly_json | safe }};
+    Plotly.newPlot('plotly-div', graphs.data, graphs.layout);
+</script>
+
+{% endblock %}
