@@ -26,7 +26,7 @@ app.config['PLOT_FOLDER'] = 'static/plots'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key_change_in_prod')
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 
 # Initialize Session
 Session(app)
