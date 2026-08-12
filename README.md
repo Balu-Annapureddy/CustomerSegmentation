@@ -1,123 +1,157 @@
-# 📊 Customer Segmentation Web Application (RFM Analysis)
+# CustomerSegmentation — E-Commerce Customer Analytics & Machine Learning Clustering Platform
 
-A Flask-based web application that performs **Customer Segmentation** using RFM (Recency, Frequency, Monetary) analysis and multiple clustering algorithms.
+> **Status**: 🔵 Completed / Portfolio Maintained  
+> **Target Identity**: CustomerSegmentation  
+> **License**: MIT License ([LICENSE](LICENSE))  
 
-## ✨ Features
+CustomerSegmentation is a machine learning analytics platform built with **Python**, **Flask**, **Pandas**, **Scikit-learn**, and **Plotly**, designed to convert e-commerce transaction logs into Recency, Frequency, and Monetary (RFM) customer behavioral profiles using unsupervised clustering models.
 
-- **RFM Analysis**: Automatically calculates Recency, Frequency, and Monetary values
-- **Multiple Clustering Algorithms**: 
-  - K-Means
-  - Hierarchical (Agglomerative)
-  - DBSCAN (Density-Based)
-- **Interactive 3D Visualization**: Plotly-powered 3D scatter plots
-- **Data Export**: Download segmented customer data as CSV
-- **Session Management**: Secure, multi-user support
-- **Tunable Parameters**: Adjust cluster count and DBSCAN parameters
+---
 
-## 🚀 Getting Started
+## Overview
+
+E-commerce businesses need to group customers into behavioral segments (e.g. VIP Champions, Loyal Customers, At-Risk Accounts, Disengaged Buyers) to tailor marketing strategies and prevent churn. **CustomerSegmentation** automates the end-to-end data pipeline: cleaning raw transaction logs, engineering RFM metrics, scaling features with `StandardScaler`, and evaluating unsupervised clustering algorithms (**K-Means**, **DBSCAN**, and **Agglomerative Hierarchical**).
+
+---
+
+## Why I Built It
+
+I built CustomerSegmentation to explore exploratory data analysis (EDA), feature engineering, unsupervised machine learning algorithms, and interactive web dashboard development. Building CustomerSegmentation required handling real-world transaction data anomalies (negative quantities, missing CustomerIDs, duplicate invoices) and evaluating clustering quality using Silhouette coefficient scores.
+
+---
+
+## Architecture & Data Flow
+
+```mermaid
+flowchart TD
+    Data[Raw E-Commerce Transaction CSV / Excel] --> Preprocessor[Data Cleaning & Normalization ml/preprocessing.py]
+    Preprocessor --> RFMEngine[RFM Feature Engineer - Recency, Frequency, Monetary]
+    
+    subgraph Feature Scaling & Machine Learning
+        RFMEngine --> Scaler[StandardScaler Feature Normalizer]
+        Scaler --> KMeans[K-Means Clustering]
+        Scaler --> DBSCAN[DBSCAN Density Clustering]
+        Scaler --> Hierarchical[Agglomerative Hierarchical Clustering]
+    end
+
+    subgraph Analytics & Web Dashboard
+        KMeans --> Eval[Silhouette Score Evaluator ml/evaluation.py]
+        DBSCAN --> Eval
+        Hierarchical --> Eval
+        Eval --> Dashboard[Flask Web Application app.py]
+        Dashboard --> Visuals[Interactive 2D & 3D Plotly Visualizations]
+    end
+```
+
+---
+
+## Key Features & Systems Design
+
+- **Automated Data Cleaning Pipeline**: `basic_cleaning` normalizes column headers, converts invoice dates, filters out negative quantities/prices, and drops unassigned customer records.
+- **RFM Feature Engineering**: `build_rfm` constructs three core behavioral dimensions per customer:
+  - **Recency**: Days elapsed since most recent transaction.
+  - **Frequency**: Distinct invoice transaction count.
+  - **Monetary**: Aggregate total purchase spend.
+- **Multiple Unsupervised ML Algorithms**: Supports tunable K-Means, DBSCAN, and Agglomerative Hierarchical clustering (`ml/clustering.py`).
+- **Cluster Evaluation Metrics**: Calculates Silhouette scores and segment distribution stats (`ml/evaluation.py`).
+- **Interactive 2D & 3D Visualizations**: Generates dynamic 2D Seaborn/Matplotlib charts and 3D Plotly scatter plots (`ml/visualizations.py`).
+- **Export & Session Management**: Session-isolated data processing enabling CSV export of segmented customer lists.
+
+---
+
+## Technical Stack
+
+| Layer | Technologies |
+|---|---|
+| **Backend & Web Framework** | Python 3.10+, Flask 3.0, Flask-Session |
+| **Data Processing & ML** | `pandas`, `numpy`, `scikit-learn`, `joblib` |
+| **Data Visualization** | `plotly`, `matplotlib`, `seaborn` |
+| **Spreadsheet Ingestion** | `openpyxl`, `xlrd` |
+| **Testing & Quality** | Python standard `unittest` framework |
+
+---
+
+## Repository Structure
+
+```
+Customer-Segmentation/
+├── ml/                         # Machine learning & data engineering modules
+│   ├── clustering.py           # K-Means, DBSCAN, & Hierarchical clustering
+│   ├── evaluation.py           # Silhouette score & cluster metrics
+│   ├── preprocessing.py        # Data cleaning & RFM feature calculation
+│   └── visualizations.py       # 2D & 3D plot generators
+├── static/
+│   └── plots/                  # Generated visualization artifacts
+├── templates/                  # Jinja2 HTML templates (upload, select, results)
+├── tests/
+│   └── test_segmentation.py    # Automated unit test suite (4 core tests)
+├── app.py                      # Flask application & session routes
+├── .env.example                # Safe environment variable configuration template
+├── LICENSE                     # MIT License
+├── requirements.txt            # Dependency requirements
+└── run.bat                     # Windows batch launch script
+```
+
+---
+
+## Installation & Setup
 
 ### Prerequisites
-- Python 3.8+
-- pip installed
+- Python 3.10+
 
-### Setup & Installation
+### Setup Virtual Environment
 
-1. **Clone the repository** (if using Git)
 ```bash
-git clone <your-repo-url>
+# Clone repository
+git clone https://github.com/Balu-Annapureddy/Customer-Segmentation.git
 cd Customer-Segmentation
-```
 
-2. **Create a virtual environment**
-```bash
-python -m venv venv
-```
+# Create virtual environment
+python -m venv .venv
 
-3. **Activate the virtual environment**
+# Activate virtual environment
+# Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+# Linux/macOS:
+# source .venv/bin/activate
 
-| OS | Command |
-|---|---|
-| Windows (PowerShell) | `.\venv\Scripts\Activate.ps1` |
-| Windows (CMD) | `venv\Scripts\activate.bat` |
-| macOS / Linux | `source venv/bin/activate` |
-
-4. **Install dependencies**
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Running the Application
+---
 
-**Option 1: One-Click (Windows)**
-```bash
-run.bat
-```
+## Usage
 
-**Option 2: Manual**
+Launch the Flask web application:
+
 ```bash
-# Activate venv first (see above)
 python app.py
 ```
 
-Open your browser and navigate to: **http://127.0.0.1:8000**
+Open `http://127.0.0.1:8000` in your browser. Upload an e-commerce transaction dataset (`InvoiceDate`, `CustomerID`, `Quantity`, `UnitPrice`), configure clustering parameters, and inspect the resulting segments.
 
-## 💾 Usage Workflow
+---
 
-### 1. Upload Data
-Upload a CSV or Excel file containing:
-- `InvoiceDate`
-- `CustomerID`
-- `Quantity`
-- `UnitPrice`
+## Testing
 
-### 2. Select Algorithm
-Choose your clustering method:
-- **K-Means / Hierarchical**: Specify number of clusters (2-10)
-- **DBSCAN**: Adjust `eps` and `min_samples` parameters
+Automated tests are located in `tests/test_segmentation.py` (4 unit tests covering data cleaning, RFM calculation, feature scaling, and K-Means clustering).
 
-### 3. View Results
-- **Cluster Metrics**: Silhouette score and cluster sizes
-- **2D Plot**: Recency vs. Monetary scatter plot
-- **3D Interactive Plot**: Explore all three RFM dimensions
-- **Segment Summary**: Average RFM values per cluster
-- **Download**: Export results as CSV
+Run the test suite:
 
-## 🗂️ Project Structure
-```
-Customer-Segmentation/
-├── app.py                      # Main Flask application
-├── requirements.txt            # Python dependencies
-├── run.bat                     # Quick-start script (Windows)
-├── .gitignore                  # Git ignore rules
-├── templates/                  # HTML templates
-│   ├── base.html
-│   ├── upload.html
-│   ├── select_algorithm.html
-│   └── results.html
-├── static/
-│   └── plots/                  # Auto-generated plots
-└── ml/                         # ML modules
-    ├── preprocessing.py        # RFM calculation
-    ├── clustering.py           # Clustering algorithms
-    ├── evaluation.py           # Metrics
-    └── visualizations.py       # Plotting functions
+```bash
+.\.venv\Scripts\python.exe -m unittest discover tests
 ```
 
-## ⚙️ Technical Details
+---
 
-### RFM Model
-- **Recency**: Days since last purchase
-- **Frequency**: Number of purchases
-- **Monetary**: Total amount spent
+## Limitations
 
-### Security Features
-- Session-based file management (no global state)
-- Environment variable support for secret keys
-- 100MB file upload limit
+- **Dataset Requirements**: Requires transaction logs containing customer identifiers, timestamps, quantities, and unit prices.
+- **Unsupervised Evaluation**: Optimal cluster count (`k`) should be verified using Silhouette scores and domain intuition.
 
-### Visualization
-- **Matplotlib**: 2D scatter plots
-- **Plotly**: Interactive 3D visualizations
+---
 
-## 📝 License
-This project was created as a B.Tech final year mini project.
+## License
+
+This project is licensed under the MIT License — see the [`LICENSE`](LICENSE) file for details.
