@@ -1,6 +1,6 @@
 # CustomerSegmentation — E-Commerce Customer Analytics & Machine Learning Clustering Platform
 
-> **Status**: 🔵 Completed / Portfolio Maintained  
+> **Status**: 🔵 Completed Data-Science Project  
 > **Target Identity**: CustomerSegmentation  
 > **License**: MIT License ([LICENSE](LICENSE))  
 
@@ -84,7 +84,8 @@ Customer-Segmentation/
 │   └── plots/                  # Generated visualization artifacts
 ├── templates/                  # Jinja2 HTML templates (upload, select, results)
 ├── tests/
-│   └── test_segmentation.py    # Automated unit test suite (4 core tests)
+│   ├── test_segmentation.py    # Basic cleaning, RFM, & K-Means unit tests
+│   └── test_evaluation_dbscan.py # DBSCAN, Silhouette evaluation, & invalid data tests
 ├── app.py                      # Flask application & session routes
 ├── .env.example                # Safe environment variable configuration template
 ├── LICENSE                     # MIT License
@@ -135,13 +136,19 @@ Open `http://127.0.0.1:8000` in your browser. Upload an e-commerce transaction d
 
 ## Testing
 
-Automated tests are located in `tests/test_segmentation.py` (4 unit tests covering data cleaning, RFM calculation, feature scaling, and K-Means clustering).
+Automated unit tests are located in `tests/` (7 unit tests covering data cleaning, RFM calculation, feature scaling, K-Means clustering, DBSCAN, and Silhouette score evaluation).
 
 Run the test suite:
 
 ```bash
 .\.venv\Scripts\python.exe -m unittest discover tests
 ```
+
+---
+
+## Security Audit Notice
+
+An audit of source files found no obvious hardcoded credentials. Flask secret key configuration dynamically reads `SECRET_KEY` from environment variables with local development fallbacks.
 
 ---
 
