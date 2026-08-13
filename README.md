@@ -104,8 +104,9 @@ Customer-Segmentation/
 
 ```bash
 # Clone repository
-git clone https://github.com/Balu-Annapureddy/Customer-Segmentation.git
-cd Customer-Segmentation
+git clone https://github.com/Balu-Annapureddy/CustomerSegmentation.git
+cd CustomerSegmentation
+
 
 # Create virtual environment
 python -m venv .venv
