@@ -74,8 +74,9 @@ flowchart TD
 ## Repository Structure
 
 ```
-Customer-Segmentation/
+CustomerSegmentation/
 ├── ml/                         # Machine learning & data engineering modules
+
 │   ├── clustering.py           # K-Means, DBSCAN, & Hierarchical clustering
 │   ├── evaluation.py           # Silhouette score & cluster metrics
 │   ├── preprocessing.py        # Data cleaning & RFM feature calculation
